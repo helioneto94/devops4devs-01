@@ -9,10 +9,21 @@ jobs:
   CI:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4.1.4
+        name: Checkout do repositório
+      - name: Autenticação no Docker
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_PWD }}
       - name: Construção da imagem Docker
-        run: echo "Docker Build"
-      - name: "Publicar a imagem no Docker Hub"
-        run: echo "Docker push"
+        with:
+          context: ./src
+          file: ./src/Dockerfile
+          push: true
+          tags: |
+            helioneto94/devops4devs-news:latest
+            helioneto94/devops4devs-news:${{github.run_number}}
+
   CD:
     needs: [CI]
     runs-on: ubuntu-latest
